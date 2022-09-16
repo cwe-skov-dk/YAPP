@@ -29,6 +29,7 @@ typedef enum
 	NMEA_VWR,
 	NMEA_VWT,
 	NMEA_MWV,
+	NMEA_RMB,
 	NMEA_RMC,
 	NMEA_GLL,
 	// nmea add more message types here

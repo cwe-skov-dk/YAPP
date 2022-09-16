@@ -25,6 +25,11 @@ unsigned long next_gmt_send_time=0UL;
 unsigned long next_date_send_time=0UL;
 unsigned long next_latitude_send_time=0UL;
 unsigned long next_longitude_send_time=0UL;
+unsigned long next_heading_send_time=0UL;
+unsigned long next_nav_to_wp_info_send_time=0UL;
+unsigned long next_lamp_send_time=0UL;
+
+unsigned char debug_test_lamp=0;
 
 // seatalk add more data variables here
 float seatalk_depth;
@@ -63,23 +68,27 @@ date_t seatalk_date;
 unsigned long seatalk_date_receive_time=0UL;
 
 // seatalk add default transmit period settings here
-const unsigned char seatalk_default_settings[]={2, 		// depth
-												1,		// boatspeed
-												1,		// compass+rudder
-												10,		// variation
-												15, 	// water temp
-												3,		// triplog
-												0,		// trip
-												0,		// log
-												2,		// awa
-												2,		// aws
-												2,		// sog
-												2,		// cog
-												2,		// latitude
-												2,		// longitude
-												2,		// GMT
-												10,		// date
-											   };
+const unsigned char seatalk_default_settings[]={
+	2,	// depth
+	1,	// boatspeed
+	1,	// compass+rudder
+	10,	// variation
+	15, 	// water temp
+	3,	// triplog
+	0,	// trip
+	0,	// log
+	2,	// awa
+	2,	// aws
+	2,	// sog
+	2,	// cog
+	2,	// latitude
+	2,	// longitude
+	2,	// GMT
+	10,	// date
+	2,	// heading
+	2,	// lamp
+	2,	// nav_to_wp_info
+};
 
 // nmea add more data variables here
 float nmea_depth;
@@ -118,6 +127,16 @@ unsigned long nmea_latitude_receive_time=0UL;
 signed int nmea_longitude_degrees;
 float nmea_longitude_minutes;
 unsigned long nmea_longitude_receive_time=0UL;
+float nmea_xte;
+unsigned long nmea_xte_receive_time=0UL;
+char nmea_direction_to_steer;
+unsigned long nmea_direction_to_steer_receive_time=0UL;
+char nmea_destination_waypoint_name[12];
+unsigned long nmea_destination_waypoint_name_receive_time=0UL;
+float nmea_distance_to_destination;
+unsigned long nmea_distance_to_destination_receive_time=0UL;
+float nmea_bearing_to_destination;
+unsigned long nmea_bearing_to_destination_receive_time=0UL;
 
 unsigned long next_dpt_send_time=0UL;
 unsigned long next_dbt_send_time=0UL;
@@ -135,21 +154,22 @@ unsigned long next_rmc_send_time=0UL;
 unsigned long next_gll_send_time=0UL;
 
 // nmea add default transmit period settings here
-const unsigned char nmea_default_settings[]={2, 		// DPT
-											 2, 		// DBT
-											 2,			// VHW
-											 2,			// RSA
-											 2,			// HDM
-											 2,			// HDG
-											 2,			// HDT
-											 2,			// MTW
-											 2,			// VLW
-											 2,			// VWR
-											 2,			// VWT
-											 2,			// MWV
-											 2,			// RMC
-											 2,			// GLL
-											};		 				
+const unsigned char nmea_default_settings[]={
+	2, 	// DPT
+	2, 	// DBT
+	2,	// VHW
+	2,	// RSA
+	2,	// HDM
+	2,	// HDG
+	2,	// HDT
+	2,	// MTW
+	2,	// VLW
+	2,	// VWR
+	2,	// VWT
+	2,	// MWV
+	2,	// RMC
+	2,	// GLL
+};
 
 volatile char nmea_messages_in[NUMBER_NMEA_MESSAGES][NMEA_MESSAGE_STORAGE];
 volatile char nmea_messages_out[NMEA_OUT_BUFFER_SIZE];

@@ -7,7 +7,7 @@
 #include "seatalk.h"
 
 #ifdef _DEBUG
-#include "nmea.h"	
+#include "nmea.h"
 extern char debug_string[];
 #endif
 
@@ -44,25 +44,28 @@ extern time_t seatalk_gmt;
 extern date_t seatalk_date;
 
 // seatalk add more data types here
-static const unsigned char seatalk_identifiers[]={SEATALK_ID_DEPTH,
-													SEATALK_ID_BOATSPEED,
-													SEATALK_ID_COMP_RUDD,
-													SEATALK_ID_VARIATION,
-													SEATALK_ID_TEMPERATURE,
-													SEATALK_ID_TRIPLOG,
-													SEATALK_ID_TRIP,
-													SEATALK_ID_LOG,
-													SEATALK_ID_APPARENT_WIND_ANGLE,
-													SEATALK_ID_APPARENT_WIND_SPEED,
-													SEATALK_ID_SOG,							
-													SEATALK_ID_COG,							
-												 	SEATALK_ID_LATITUDE,						
-													SEATALK_ID_LONGITUDE,					
-													SEATALK_ID_GMT,							
-													SEATALK_ID_DATE,	
-													
-													// add more message types here
-												 };		
+static const unsigned char seatalk_identifiers[] = {
+	SEATALK_ID_DEPTH,
+	SEATALK_ID_BOATSPEED,
+	SEATALK_ID_COMP_RUDD,
+	SEATALK_ID_VARIATION,
+	SEATALK_ID_TEMPERATURE,
+	SEATALK_ID_TRIPLOG,
+	SEATALK_ID_TRIP,
+	SEATALK_ID_LOG,
+	SEATALK_ID_APPARENT_WIND_ANGLE,
+	SEATALK_ID_APPARENT_WIND_SPEED,
+	SEATALK_ID_SOG,
+	SEATALK_ID_COG,
+	SEATALK_ID_LATITUDE,
+	SEATALK_ID_LONGITUDE,
+	SEATALK_ID_GMT,
+	SEATALK_ID_DATE,
+	SEATALK_ID_HEADING,
+	SEATALK_ID_LAMP,
+
+	// add more message types here
+};
 
 seatalk_message_type_t seatalk_identify_message_type(unsigned char message_identifier)
 {
@@ -90,16 +93,16 @@ unsigned char seatalk_get_identifier_from_type(seatalk_message_type_t message_ty
 }
 
 void seatalk_init(seatalk_message_handler callback)
-{	
+{
 	unsigned char i;
 
 	handler=callback;
-	
+
 	// setup the output
 	seatalk_transmit_state=TS_SUCCESS;
 	TRISA&=SEATALK_TRISA_WRITE_VAL;
 	SEATALK_DATA_WRITE=0;
-	
+
 	// setup the input
 	TRISB|=SEATALK_TRISB_READ_VAL;
 
@@ -133,7 +136,7 @@ void seatalk_send_next_message(void)
 		{
 			seatalk_out_next_read_pos=0;
 		}
-		
+
 		next_send_millisecond_time+=10UL;
 	}
 	else
@@ -152,40 +155,40 @@ void seatalk_process_next_message(void)
 	static unsigned char i=0;
 	unsigned char message_id;
 	unsigned char c;
-	
+
 	// now look at all the messages in the messages list to see if there are any new ones ready to processing
 	if(seatalk_messages_in[i][0]==MS_READY)
-	{		
-		seatalk_messages_in[i][0]=MS_READING;	
+	{
+		seatalk_messages_in[i][0]=MS_READING;
 		message_id=seatalk_messages_in[i][1];
 
-		if(message_id==SEATALK_ID_DEPTH)												
+		if(message_id==SEATALK_ID_DEPTH)
 		{
 			seatalk_depth=(float)seatalk_messages_in[i][4];
 			seatalk_depth+=((float)seatalk_messages_in[i][5])*256.0f;
-			seatalk_depth/=32.808f; 
+			seatalk_depth/=32.808f;
 			handler(SEATALK_ID_DEPTH);
-		}	
-		else if(message_id==SEATALK_ID_BOATSPEED)												
+		}
+		else if(message_id==SEATALK_ID_BOATSPEED)
 		{
 			seatalk_boatspeed=(float)seatalk_messages_in[i][3];
 			seatalk_boatspeed+=((float)seatalk_messages_in[i][4])*256.0f;
-			seatalk_boatspeed/=10.0f; 
+			seatalk_boatspeed/=10.0f;
 			handler(SEATALK_ID_BOATSPEED);
 		}
 		else if(message_id==SEATALK_ID_COMP_RUDD || message_id==SEATALK_ID_COMP_RUDD_AUTO)
 		{
-    		unsigned char angle = (seatalk_messages_in[i][2] >> 6) | (seatalk_messages_in[i][3] << 2);
-    		if(angle!=0xFF)    
+		unsigned char angle = (seatalk_messages_in[i][2] >> 6) | (seatalk_messages_in[i][3] << 2);
+		if(angle!=0xFF)
 			{
-        		seatalk_heading_magnetic=((unsigned int)((seatalk_messages_in[i][2]>>4)&0x03)*180)+angle;
-        		if(seatalk_heading_magnetic>719)
+			seatalk_heading_magnetic=((unsigned int)((seatalk_messages_in[i][2]>>4)&0x03)*180)+angle;
+			if(seatalk_heading_magnetic>719)
 				{
 					seatalk_heading_magnetic-=720;
 				}
 				seatalk_heading_magnetic/=2;
-				handler(SEATALK_ID_HEADING_MAGNETIC);	
-			}	
+				handler(SEATALK_ID_COMP_RUDD);
+			}
 
 			if(message_id==SEATALK_ID_COMP_RUDD)
 			{
@@ -195,36 +198,36 @@ void seatalk_process_next_message(void)
 			{
 				seatalk_rudder=(signed char)seatalk_messages_in[i][7];
 			}
-			handler(SEATALK_ID_RUDDER);			
+			handler(SEATALK_ID_COMP_RUDD);
 		}
-		else if(message_id==SEATALK_ID_VARIATION)												
+		else if(message_id==SEATALK_ID_VARIATION)
 		{
 			seatalk_variation=(float)(signed char)(seatalk_messages_in[i][3]);
 			handler(SEATALK_ID_VARIATION);
 		}
-		else if(message_id==SEATALK_ID_TEMPERATURE)												
+		else if(message_id==SEATALK_ID_TEMPERATURE)
 		{
 			seatalk_temperature=(float)seatalk_messages_in[i][3];
 			seatalk_temperature+=((float)seatalk_messages_in[i][4])*256.0f;
 			seatalk_temperature-=100.0f;
-			seatalk_temperature/=10.0f; 
+			seatalk_temperature/=10.0f;
 			handler(SEATALK_ID_TEMPERATURE);
 		}
-		else if(message_id==SEATALK_ID_TRIPLOG)												
+		else if(message_id==SEATALK_ID_TRIPLOG)
 		{
 			seatalk_log=(float)seatalk_messages_in[i][3];
 			seatalk_log+=((float)seatalk_messages_in[i][4])*256.0f;
 			seatalk_log+=((float)(seatalk_messages_in[i][2]>>4))*65536.0f;
 			seatalk_log/=10.0f;
-			
+
 			seatalk_trip=(float)seatalk_messages_in[i][5];
 			seatalk_trip+=((float)seatalk_messages_in[i][6])*256.0f;
 			seatalk_trip+=((float)(seatalk_messages_in[i][7]&0x0f))*65536.0f;
 			seatalk_trip/=100.0f;
 
 			handler(SEATALK_ID_TRIPLOG);
-		}		
-		else if(message_id==SEATALK_ID_TRIP)												
+		}
+		else if(message_id==SEATALK_ID_TRIP)
 		{
 			seatalk_trip=(float)seatalk_messages_in[i][3];
 			seatalk_trip+=((float)seatalk_messages_in[i][4])*256.0f;
@@ -233,7 +236,7 @@ void seatalk_process_next_message(void)
 
 			handler(SEATALK_ID_TRIP);
 		}
-		else if(message_id==SEATALK_ID_LOG)												
+		else if(message_id==SEATALK_ID_LOG)
 		{
 			seatalk_log=(float)seatalk_messages_in[i][3];
 			seatalk_log+=((float)seatalk_messages_in[i][4])*256.0f;
@@ -246,7 +249,7 @@ void seatalk_process_next_message(void)
 		{
 			seatalk_apparent_wind_angle=((float)((((unsigned int)seatalk_messages_in[i][3])<<8)+seatalk_messages_in[i][4]))/2.0f;
 			handler(SEATALK_ID_APPARENT_WIND_ANGLE);
-		}						
+		}
 		else if(message_id==SEATALK_ID_APPARENT_WIND_SPEED)
 		{
 			seatalk_apparent_wind_speed=(float)(seatalk_messages_in[i][3] & 0x7F) + (float)(seatalk_messages_in[i][4]/10.0f);
@@ -256,7 +259,7 @@ void seatalk_process_next_message(void)
 		{
 			seatalk_sog=(seatalk_messages_in[i][3]+((unsigned int)(seatalk_messages_in[i][4])<<8))/10.0f;
 			handler(SEATALK_ID_SOG);
-		}						
+		}
 		else if(message_id==SEATALK_ID_COG)
 		{
 			seatalk_cog=((unsigned int)((seatalk_messages_in[i][2]>>4)&0x03))*90;
@@ -264,7 +267,7 @@ void seatalk_process_next_message(void)
 			seatalk_cog+=((unsigned int)(((seatalk_messages_in[i][2]>>4)&0x0C)>>3));
 			handler(SEATALK_ID_COG);
 		}
-		else if(message_id==SEATALK_ID_LATITUDE)												
+		else if(message_id==SEATALK_ID_LATITUDE)
 		{
 			seatalk_latitude_degrees=(signed int)seatalk_messages_in[i][3];
 			seatalk_latitude_minutes=seatalk_messages_in[i][4];
@@ -273,10 +276,10 @@ void seatalk_process_next_message(void)
 			if(seatalk_messages_in[i][5]&0x80)
 			{
 				seatalk_latitude_degrees=-seatalk_latitude_degrees;
-			}	
+			}
 			handler(SEATALK_ID_LATITUDE);
-		}	
-		else if(message_id==SEATALK_ID_LONGITUDE)												
+		}
+		else if(message_id==SEATALK_ID_LONGITUDE)
 		{
 			seatalk_longitude_degrees=(signed int)seatalk_messages_in[i][3];
 			seatalk_longitude_minutes=seatalk_messages_in[i][4];
@@ -288,9 +291,9 @@ void seatalk_process_next_message(void)
 			}
 			handler(SEATALK_ID_LONGITUDE);
 		}
-		else if(message_id==SEATALK_ID_GMT)												
+		else if(message_id==SEATALK_ID_GMT)
 		{
-			seatalk_gmt.hour=seatalk_messages_in[i][4]; 
+			seatalk_gmt.hour=seatalk_messages_in[i][4];
 			seatalk_gmt.minute=(seatalk_messages_in[i][3]&0xFC)>>2;
 			seatalk_gmt.second=(seatalk_messages_in[i][3]&0x03)<<4+((seatalk_messages_in[i][2]&0xf0)>>4);
 			if(seatalk_gmt.second>59)
@@ -298,26 +301,26 @@ void seatalk_process_next_message(void)
 				seatalk_gmt.second=59;
 			}
 			handler(SEATALK_ID_GMT);
-		}	
-		else if(message_id==SEATALK_ID_DATE)												
+		}
+		else if(message_id==SEATALK_ID_DATE)
 		{
-			seatalk_date.year=seatalk_messages_in[i][4]; 
+			seatalk_date.year=seatalk_messages_in[i][4];
 			seatalk_date.month=seatalk_messages_in[i][2]>>4;
-			seatalk_date.date=seatalk_messages_in[i][3];	
+			seatalk_date.date=seatalk_messages_in[i][3];
 			handler(SEATALK_ID_DATE);
 		}
-		
+
 		// seatalk add more message types here
-						
+
 		seatalk_messages_in[i][0]=MS_DONE;
-	}		
-	
+	}
+
 	i++;
 	if(i==SEATALK_NUMBER_OF_MESSAGES_IN)
 	{
 		i=0;
-	}		
-}	
+	}
+}
 
 void seatalk_queue_message_to_send(unsigned char *message)
 {
@@ -340,7 +343,7 @@ unsigned char write_seatalk_sentence(unsigned char length, unsigned char* comman
 {
 	unsigned char result=FALSE;
 	unsigned char i;
-	
+
 	if(seatalk_transmit_state<TS_SUCCESS)
 	{
 		return TS_FAILURE;
@@ -351,25 +354,25 @@ unsigned char write_seatalk_sentence(unsigned char length, unsigned char* comman
 		if(i==0)
 		{
 			seatalk_command_bit=1;
-		}	
+		}
 		else
 		{
 			seatalk_command_bit=0;
-		}	
+		}
 
 		seatalk_byte_to_write=command[i];
-			
+
 		seatalk_transmit_state=TS_GO;
-		
+
 		while(seatalk_transmit_state<TS_SUCCESS)
 		{
-		}	
-		
+		}
+
 		if(seatalk_transmit_state==TS_FAILURE)
 		{
 			break;
 		}
-	}		
+	}
 
 	return seatalk_transmit_state==TS_SUCCESS;
 }
@@ -384,7 +387,7 @@ void seatalk_depth_send(float depth)
 	depth_int=(unsigned int)(depth*32.81f);
 	seatalk_sentence[3]=(unsigned char)depth_int;
 	seatalk_sentence[4]=(unsigned char)(depth_int>>8);
-	
+
 	seatalk_queue_message_to_send(seatalk_sentence);
 }
 
@@ -397,7 +400,7 @@ void seatalk_boatspeed_send(float boatspeed)
 	boatspeed_int=(unsigned int)(boatspeed*10.0f);
 	seatalk_sentence[2]=(unsigned char)boatspeed_int;
 	seatalk_sentence[3]=(unsigned char)(boatspeed_int>>8);
-	
+
 	seatalk_queue_message_to_send(seatalk_sentence);
 }
 
@@ -411,7 +414,7 @@ void seatalk_compass_rudder_send(float compass, float rudder)
 	seatalk_sentence[1]=0x01;
 	seatalk_sentence[2]=0x00;
 	seatalk_sentence[3]=0x00;
-		
+
 	if(compass!=FLT_MAX)
 	{
 		compass_int=(unsigned int)(compass*2.0f);
@@ -442,24 +445,24 @@ void seatalk_variation_send(float variation)
 void seatalk_temperature_send(float temperature)
 {
 	unsigned int temperature_int=100+(unsigned int)(temperature*10.0f);
-	
+
 	seatalk_sentence[0]=0x27;
 	seatalk_sentence[1]=0x01;
 	seatalk_sentence[2]=(unsigned char)temperature_int;
 	seatalk_sentence[3]=(unsigned char)(temperature_int>>8);
 
 	seatalk_queue_message_to_send(seatalk_sentence);
-}	
+}
 
 void seatalk_triplog_send(float trip, float log)
 {
 	unsigned long trip_int;
 	unsigned long log_int;
-	
+
 	seatalk_sentence[0]=0x25;
 	seatalk_sentence[1]=0x04;
 	seatalk_sentence[6]=0xa0;
-		
+
 	if(log!=FLT_MAX)
 	{
 		log_int=(unsigned long)(log*10.0f);
@@ -469,31 +472,31 @@ void seatalk_triplog_send(float trip, float log)
 		seatalk_sentence[1]<<=4;
 		seatalk_sentence[1]+=0x04;
 	}
-	
+
 	if(trip!=FLT_MAX)
 	{
-		trip_int=(unsigned long)(trip*100.0f);	
+		trip_int=(unsigned long)(trip*100.0f);
 		seatalk_sentence[4]=(unsigned char)trip_int;
 		seatalk_sentence[5]=(unsigned char)(trip_int>>8);
 		seatalk_sentence[6]=0x0f&((unsigned char)(trip_int>>16));
 		seatalk_sentence[6]+=0xa0;
 	}
-	
+
 	seatalk_queue_message_to_send(seatalk_sentence);
 }
-	
+
 void seatalk_trip_send(float trip)
 {
 	unsigned long trip_int=(unsigned long)(trip*100.0f);
-	
+
 	seatalk_sentence[0]=0x21;
 	seatalk_sentence[1]=0x02;
 	seatalk_sentence[2]=(unsigned char)trip_int;
 	seatalk_sentence[3]=(unsigned char)(trip_int>>8);
 	seatalk_sentence[4]=0x0f&((unsigned char)(trip_int>>16));
-	
+
 	seatalk_queue_message_to_send(seatalk_sentence);
-}	
+}
 
 void seatalk_log_send(float log)
 {
@@ -504,21 +507,21 @@ void seatalk_log_send(float log)
 	seatalk_sentence[2]=(unsigned char)log_int;
 	seatalk_sentence[3]=(unsigned char)(log_int>>8);
 	seatalk_sentence[4]=0x0f&((unsigned char)(log_int>>16));
-	
+
 	seatalk_queue_message_to_send(seatalk_sentence);
-}	
+}
 
 void seatalk_apparent_wind_angle_send(float awa)
 {
 	unsigned int awa_int=(unsigned int)(awa*2.0f);
-	
+
 	seatalk_sentence[0]=0x10;
 	seatalk_sentence[1]=0x01;
 	seatalk_sentence[2]=(unsigned char)(awa_int>>8);
 	seatalk_sentence[3]=(unsigned char)awa_int;
 
 	seatalk_queue_message_to_send(seatalk_sentence);
-}	
+}
 
 void seatalk_apparent_wind_speed_send(float aws)
 {
@@ -526,9 +529,9 @@ void seatalk_apparent_wind_speed_send(float aws)
 	seatalk_sentence[1]=0x01;
 	seatalk_sentence[2]=0x7f&(unsigned char)aws;
 	seatalk_sentence[3]=(unsigned char)(frac(aws)*10.0f);
-	
+
 	seatalk_queue_message_to_send(seatalk_sentence);
-}	
+}
 
 void seatalk_cog_send(float cog)
 {
@@ -536,37 +539,37 @@ void seatalk_cog_send(float cog)
 	unsigned int position_in_quadrant=((unsigned int)cog)%90;
 	unsigned int big_remainder=position_in_quadrant>>1;
 	unsigned char small_remainder=(position_in_quadrant&0x01)<<1;
-	
+
 	if(frac(cog)>=0.5f)
 	{
 		small_remainder++;
-	}	
+	}
 	seatalk_sentence[0]=0x53;
 	seatalk_sentence[1]=(quadrant<<4)+(small_remainder<<6);
 	seatalk_sentence[2]=big_remainder;
 	seatalk_queue_message_to_send(seatalk_sentence);
 }
-	
+
 void seatalk_sog_send(float sog)
 {
 	unsigned int sog_int=(unsigned int)(sog*10.0f);
-	
+
 	seatalk_sentence[0]=0x52;
 	seatalk_sentence[1]=0x01;
 	seatalk_sentence[2]=(unsigned char)sog_int;
 	seatalk_sentence[3]=(unsigned char)(sog_int>>8);
 	seatalk_queue_message_to_send(seatalk_sentence);
 }
-	
+
 void seatalk_latitude_send(int latitude_degrees, float latitude_minutes)
 {
 	unsigned int latitude_minutes_int=(unsigned int)(100.0f*fabs(latitude_minutes));
-	
+
 	if(latitude_degrees<0)
 	{
 		latitude_minutes_int|=0x8000;
 	}
-		
+
 	seatalk_sentence[0]=0x50;
 	seatalk_sentence[1]=0x02;
 	seatalk_sentence[2]=util_abs(latitude_degrees);
@@ -574,16 +577,16 @@ void seatalk_latitude_send(int latitude_degrees, float latitude_minutes)
 	seatalk_sentence[4]=(unsigned char)(latitude_minutes_int>>8);
 	seatalk_queue_message_to_send(seatalk_sentence);
 }
-	
+
 void seatalk_longitude_send(int longitude_degrees, float longitude_minutes)
 {
 	unsigned int longitude_minutes_int=(unsigned int)(100.0f*fabs(longitude_minutes));
-	
+
 	if(longitude_minutes_int<0)
 	{
 		longitude_minutes_int|=0x8000;
 	}
-		
+
 	seatalk_sentence[0]=0x51;
 	seatalk_sentence[1]=0x02;
 	seatalk_sentence[2]=util_abs(longitude_degrees);
@@ -591,23 +594,133 @@ void seatalk_longitude_send(int longitude_degrees, float longitude_minutes)
 	seatalk_sentence[4]=(unsigned char)(longitude_minutes_int>>8);
 	seatalk_queue_message_to_send(seatalk_sentence);
 }
-	
+
 void seatalk_gmt_send(time_t time)
 {
 	seatalk_sentence[0]=0x54;
 	seatalk_sentence[1]=1+(time.second<<4);
 	seatalk_sentence[2]=(time.minute<<2)+(time.second>>4);
-	seatalk_sentence[3]=time.hour;	
+	seatalk_sentence[3]=time.hour;
 	seatalk_queue_message_to_send(seatalk_sentence);
 }
-	
+
 void seatalk_date_send(date_t date)
 {
 	seatalk_sentence[0]=0x56;
 	seatalk_sentence[1]=1+(date.month<<4);
 	seatalk_sentence[2]=date.date;
-	seatalk_sentence[3]=date.year;	
+	seatalk_sentence[3]=date.year;
 	seatalk_queue_message_to_send(seatalk_sentence);
+}
+
+void seatalk_heading_send(float heading)
+{
+	unsigned int heading_int = (unsigned int)(heading + 0.5);
+
+	seatalk_sentence[0]=0x89;
+	seatalk_sentence[1]=(unsigned char)((((heading_int / 90) & 0x03) | ((heading_int & 1) << 3)) << 4) | 0x02;
+	seatalk_sentence[2]=(unsigned char)((heading_int / 2) & 0x3f);
+	seatalk_sentence[3]=0x00;
+	seatalk_sentence[4]=0x20;
+
+	seatalk_queue_message_to_send(seatalk_sentence);
+}
+
+void seatalk_lamp_send(unsigned char intensity)
+{
+	seatalk_sentence[0]=0x30;
+	seatalk_sentence[1]=0x00;
+	seatalk_sentence[2]=(intensity & 3) << 2;
+
+	seatalk_queue_message_to_send(seatalk_sentence);
+}
+
+void seatalk_wp_name_send(char *wp_name)
+{
+	unsigned char XX = 0, YY = 0, ZZ = 0;
+	unsigned char c;
+	int len;
+
+	len = strlen(wp_name);
+	if (len > 0) {
+		c = (wp_name[len - 1] - 0x30) & 0x3f;
+		ZZ |= c << 2;
+		if (len > 1) {
+			c = (wp_name[len - 2] - 0x30) & 0x3f;
+			ZZ |= (c & 0x30) >> 4;
+			YY |= (c & 0x0f) << 4;
+		}
+		if (len > 2) {
+			c = (wp_name[len - 3] - 0x30) & 0x3f;
+			YY |= (c & 0x3c) >> 2;
+			XX |= (c & 0x03) << 6;
+		}
+		if (len > 3) {
+			c = (wp_name[len - 4] - 0x30) & 0x3f;
+			XX |= c;
+		}
+
+		seatalk_sentence[0] = 0x82;
+		seatalk_sentence[1] = 0x05;
+		seatalk_sentence[2] = XX;
+		seatalk_sentence[3] = ~(XX);
+		seatalk_sentence[4] = YY;
+		seatalk_sentence[5] = ~(YY);
+		seatalk_sentence[6] = ZZ;
+		seatalk_sentence[7] = ~(ZZ);
+
+		seatalk_queue_message_to_send(seatalk_sentence);
+	}
+}
+
+void seatalk_nav_to_wp_info_send(float xte, char direction_to_steer, char *wp_name, float dst, float brg)
+{
+	unsigned int XXX = 0;
+	unsigned int ZZZ = 0;
+	unsigned char F = 0;
+	unsigned char Y = 0;
+	unsigned char U = 0;
+	unsigned char VW = 0;
+
+	if (xte != FLT_MAX) {
+		XXX = (unsigned int) (xte * 100.0 + 0.5);
+		F |= 1;
+		if (XXX >= 300) {
+			F |= 8;
+		}
+	}
+	if (direction_to_steer != 'L') {
+		Y |= 4;
+	}
+	if (dst != FLT_MAX) {
+		if (dst >= 10.0) {
+			ZZZ = (unsigned int) (dst * 10.0 + 0.5);
+		} else {
+			ZZZ = (unsigned int) (dst * 100.0 + 0.5);
+			Y |= 1;
+		}
+		F |= 4;
+	}
+	if (brg != FLT_MAX) {
+		U = (unsigned char) (brg / 90);
+		VW = (unsigned char) ((brg - U * 90.0) * 2.0 + 0.5);
+		U |= 8;
+		F |= 2;
+	}
+
+	seatalk_sentence[0] = 0x85;
+	seatalk_sentence[1] = 0x06 | (((XXX) & 0x0f) << 4);
+	seatalk_sentence[2] = ((XXX & 0xff0) >> 4);
+	seatalk_sentence[3] = ((VW & 0x0f) << 4) | U;
+	seatalk_sentence[4] = ((VW & 0xf0) >> 4) | (((ZZZ) & 0x0f) << 4);
+	seatalk_sentence[5] = ((ZZZ & 0xff0) >> 4);
+	seatalk_sentence[6] = (Y << 4) | F;
+	seatalk_sentence[7] = 0x00;
+	seatalk_sentence[8] = ~(seatalk_sentence[6]);
+
+	seatalk_queue_message_to_send(seatalk_sentence);
+
+	seatalk_wp_name_send(wp_name);
 }
 
 // seatalk add more message types here

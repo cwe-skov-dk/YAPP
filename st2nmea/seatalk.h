@@ -27,6 +27,9 @@ typedef enum
 	SEATALK_LONGITUDE,					
 	SEATALK_GMT,							
 	SEATALK_DATE,	
+	SEATALK_HEADING,
+	SEATALK_LAMP,
+	SEATALK_NAV_TO_WP_INFO,
 	
 	// seatalk add more message types here
 	SEATALK_UNKNOWN
@@ -94,37 +97,37 @@ void seatalk_latitude_send(int latitude_degrees, float latitude_minutes);
 void seatalk_longitude_send(int longitude_degrees, float longitude_minutes);
 void seatalk_gmt_send(time_t time);
 void seatalk_date_send(date_t date);
+void seatalk_heading_send(float heading);
+void seatalk_lamp_send(unsigned char intensity);
+void seatalk_nav_to_wp_info_send(float xte, char direction_to_stear, char* wp_name, float dst, float brg);
 
 #define SEATALK_NUMBER_OF_MESSAGES_IN		5
 #define SEATALK_NUMBER_OF_MESSAGES_OUT		5
-#define SEATALK_MAX_MESSAGE_SIZE 			18
+#define SEATALK_MAX_MESSAGE_SIZE 		18
 
 // these are Seatalk message command identifiers
-#define SEATALK_ID_DEPTH 						0x00
-#define SEATALK_ID_BOATSPEED					0x20
-#define SEATALK_ID_COMP_RUDD_AUTO				0x84
-#define SEATALK_ID_COMP_RUDD					0x9c
-#define SEATALK_ID_VARIATION					0x99
-#define SEATALK_ID_TEMPERATURE					0x27
-#define SEATALK_ID_TRIP							0x21
-#define SEATALK_ID_LOG							0x22
-#define SEATALK_ID_TRIPLOG						0x25
-#define SEATALK_ID_APPARENT_WIND_ANGLE 			0x10
-#define SEATALK_ID_APPARENT_WIND_SPEED 			0x11
-#define SEATALK_ID_SOG							0x52
-#define SEATALK_ID_COG							0x53
-#define SEATALK_ID_LATITUDE						0x50
-#define SEATALK_ID_LONGITUDE					0x51
-#define SEATALK_ID_GMT							0x54
-#define	SEATALK_ID_DATE							0x56
+#define SEATALK_ID_DEPTH 			0x00
+#define SEATALK_ID_APPARENT_WIND_ANGLE 		0x10
+#define SEATALK_ID_APPARENT_WIND_SPEED 		0x11
+#define SEATALK_ID_BOATSPEED			0x20
+#define SEATALK_ID_TRIP				0x21
+#define SEATALK_ID_LOG				0x22
+#define SEATALK_ID_TRIPLOG			0x25
+#define SEATALK_ID_TEMPERATURE			0x27
+#define SEATALK_ID_LAMP				0x30
+#define SEATALK_ID_LATITUDE			0x50
+#define SEATALK_ID_LONGITUDE			0x51
+#define SEATALK_ID_SOG				0x52
+#define SEATALK_ID_COG				0x53
+#define SEATALK_ID_GMT				0x54
+#define	SEATALK_ID_DATE				0x56
+#define SEATALK_ID_COMP_RUDD_AUTO		0x84
+#define SEATALK_ID_NAV_TO_WP_INFO		0x85
+#define SEATALK_ID_HEADING			0x89
+#define SEATALK_ID_VARIATION			0x99
+#define SEATALK_ID_COMP_RUDD			0x9c
 
-#define SEATALK_ID_UNKNOWN						0xff
-
-// these are user defined
-#define SEATALK_ID_USER_DEFINED_MESSAGE_MIN		0xc0
-#define SEATALK_ID_TRUE_WIND					SEATALK_ID_USER_DEFINED_MESSAGE_MIN
-#define	SEATALK_ID_HEADING_MAGNETIC				(SEATALK_ID_USER_DEFINED_MESSAGE_MIN+1)
-#define	SEATALK_ID_RUDDER						(SEATALK_ID_USER_DEFINED_MESSAGE_MIN+2)
+#define SEATALK_ID_UNKNOWN			0xff
 
 #ifndef TRUE
 #define TRUE	1

@@ -11,47 +11,47 @@
 #include "util.h"
 
 // Configuration bits are described in section 24.1
-// Note: For a complete list of the available config pragmas and their values, 
+// Note: For a complete list of the available config pragmas and their values,
 // click Help|Topics then select "PIC18 Config Settings" in the Language Tools section.
 
-#pragma config FOSC=INTIO67		// Internal oscillator block, port function on RA6 and RA7 
-#pragma config PLLCFG=OFF		// Oscillator PLL set in software for HFINTOSC  
-#pragma config PRICLKEN=OFF		// Primary clock disabled, using INTOSC  
-#pragma config FCMEN=OFF		// Fail-Safe Clock Monitor disabled  
-#pragma config IESO=OFF			// Oscillator Switchover mode disabled  
-#pragma config PWRTEN=OFF		// Power up timer disabled  
-#pragma config BOREN=SBORDIS	// Brown-out Reset enabled in hardware only (SBOREN is disabled) 
-#pragma config BORV=285			// VBOR set to 2.85 V nominal  
+#pragma config FOSC=INTIO67		// Internal oscillator block, port function on RA6 and RA7
+#pragma config PLLCFG=OFF		// Oscillator PLL set in software for HFINTOSC
+#pragma config PRICLKEN=OFF		// Primary clock disabled, using INTOSC
+#pragma config FCMEN=OFF		// Fail-Safe Clock Monitor disabled
+#pragma config IESO=OFF			// Oscillator Switchover mode disabled
+#pragma config PWRTEN=OFF		// Power up timer disabled
+#pragma config BOREN=SBORDIS	// Brown-out Reset enabled in hardware only (SBOREN is disabled)
+#pragma config BORV=285			// VBOR set to 2.85 V nominal
 #pragma config WDTEN=ON			// Watch dog timer is always enabled.
-#pragma config WDTPS=1024		// Watchdog timer prescalar 
-#pragma config CCP2MX=PORTC1	// CCP2 input/output is multiplexed with RC1  
-#pragma config PBADEN=OFF		// PORTB<5:0> pins are configured as digital I/O on Reset  
-#pragma config CCP3MX=PORTC6	// P3A/CCP3 input/output is mulitplexed with RC6  
-#pragma config HFOFST=OFF		// HFINTOSC output and ready status are delayed by the oscillator stable status  
-#pragma config T3CMX=PORTC0		// T3CKI is on RC0  
-#pragma config P2BMX=PORTC0		// P2B is on RC0  
-#pragma config MCLRE=EXTMCLR	// MCLR pin enabled, RE3 input pin disabled  
-#pragma config STVREN=OFF		// Stack full/underflow will not cause Reset  
-#pragma config LVP=OFF			// Single-Supply ICSP disabled  
-#pragma config XINST=OFF		// Instruction set extension and Indexed Addressing mode disabled (Legacy mode)  
-#pragma config DEBUG=OFF		// Debug disabled  
-#pragma config CP0=OFF			// Block 0 (000800-001FFFh) not code-protected  
-#pragma config CP1=OFF			// Block 1 (002000-003FFFh) not code-protected  
-#pragma config CP3=OFF			// Block 3 (006000-007FFFh) not code-protected  
-#pragma config CPB=OFF			// Boot block (000000-0007FFh) not code-protected  
-#pragma config CPD=OFF			// Data EEPROM not code-protected  
-#pragma config WRT0=OFF			// Block 0 (000800-001FFFh) not write-protected  
-#pragma config WRT1=OFF			// Block 1 (002000-003FFFh) not write-protected  
-#pragma config WRT2=OFF			// Block 2 (004000-005FFFh) not write-protected  
-#pragma config WRT3=OFF			// Block 3 (006000-007FFFh) not write-protected  
-#pragma config WRTC=OFF			// Configuration registers (300000-3000FFh) not write-protected  
-#pragma config WRTB=OFF			// Boot Block (000000-0007FFh) not write-protected  
-#pragma config WRTD=OFF			// Data EEPROM not write-protected  
-#pragma config EBTR0=OFF		// Block 0 (000800-001FFFh) not protected from table reads executed in other blocks  
-#pragma config EBTR1=OFF		// Block 1 (002000-003FFFh) not protected from table reads executed in other blocks  
-#pragma config EBTR2=OFF		// Block 2 (004000-005FFFh) not protected from table reads executed in other blocks  
-#pragma config EBTR3=OFF		// Block 3 (006000-007FFFh) not protected from table reads executed in other blocks  
-#pragma config EBTRB=OFF		// Boot Block (000000-0007FFh) not protected from table reads executed in other blocks  
+#pragma config WDTPS=1024		// Watchdog timer prescalar
+#pragma config CCP2MX=PORTC1	// CCP2 input/output is multiplexed with RC1
+#pragma config PBADEN=OFF		// PORTB<5:0> pins are configured as digital I/O on Reset
+#pragma config CCP3MX=PORTC6	// P3A/CCP3 input/output is mulitplexed with RC6
+#pragma config HFOFST=OFF		// HFINTOSC output and ready status are delayed by the oscillator stable status
+#pragma config T3CMX=PORTC0		// T3CKI is on RC0
+#pragma config P2BMX=PORTC0		// P2B is on RC0
+#pragma config MCLRE=EXTMCLR	// MCLR pin enabled, RE3 input pin disabled
+#pragma config STVREN=OFF		// Stack full/underflow will not cause Reset
+#pragma config LVP=OFF			// Single-Supply ICSP disabled
+#pragma config XINST=OFF		// Instruction set extension and Indexed Addressing mode disabled (Legacy mode)
+#pragma config DEBUG=OFF		// Debug disabled
+#pragma config CP0=OFF			// Block 0 (000800-001FFFh) not code-protected
+#pragma config CP1=OFF			// Block 1 (002000-003FFFh) not code-protected
+#pragma config CP3=OFF			// Block 3 (006000-007FFFh) not code-protected
+#pragma config CPB=OFF			// Boot block (000000-0007FFh) not code-protected
+#pragma config CPD=OFF			// Data EEPROM not code-protected
+#pragma config WRT0=OFF			// Block 0 (000800-001FFFh) not write-protected
+#pragma config WRT1=OFF			// Block 1 (002000-003FFFh) not write-protected
+#pragma config WRT2=OFF			// Block 2 (004000-005FFFh) not write-protected
+#pragma config WRT3=OFF			// Block 3 (006000-007FFFh) not write-protected
+#pragma config WRTC=OFF			// Configuration registers (300000-3000FFh) not write-protected
+#pragma config WRTB=OFF			// Boot Block (000000-0007FFh) not write-protected
+#pragma config WRTD=OFF			// Data EEPROM not write-protected
+#pragma config EBTR0=OFF		// Block 0 (000800-001FFFh) not protected from table reads executed in other blocks
+#pragma config EBTR1=OFF		// Block 1 (002000-003FFFh) not protected from table reads executed in other blocks
+#pragma config EBTR2=OFF		// Block 2 (004000-005FFFh) not protected from table reads executed in other blocks
+#pragma config EBTR3=OFF		// Block 3 (006000-007FFFh) not protected from table reads executed in other blocks
+#pragma config EBTRB=OFF		// Boot Block (000000-0007FFh) not protected from table reads executed in other blocks
 
 // for 64MHz operation the following delays can be used
 // Delay1TCY(); //delays 1/16us
@@ -101,6 +101,11 @@ extern unsigned long next_gmt_send_time;
 extern unsigned long next_date_send_time;
 extern unsigned long next_latitude_send_time;
 extern unsigned long next_longitude_send_time;
+extern unsigned long next_heading_send_time;
+extern unsigned long next_lamp_send_time;
+extern unsigned long next_nav_to_wp_info_send_time;
+
+extern unsigned char debug_test_lamp;
 
 extern float seatalk_depth;
 extern unsigned long seatalk_depth_receive_time;
@@ -189,6 +194,16 @@ extern unsigned long nmea_latitude_receive_time;
 extern signed int nmea_longitude_degrees;
 extern float nmea_longitude_minutes;
 extern unsigned long nmea_longitude_receive_time;
+extern float nmea_xte;
+extern unsigned long nmea_xte_receive_time;
+extern char nmea_direction_to_steer;
+extern unsigned long nmea_direction_to_steer_receive_time;
+extern char nmea_destination_waypoint_name[12];
+extern unsigned long nmea_destination_waypoint_name_receive_time;
+extern float nmea_distance_to_destination;
+extern unsigned long nmea_distance_to_destination_receive_time;
+extern float nmea_bearing_to_destination;
+extern unsigned long nmea_bearing_to_destination_receive_time;
 
 void low_isr(void);
 static void init(void);
@@ -197,19 +212,19 @@ static void queue_next_nmea_message(void);
 static void queue_next_seatalk_message(void);
 static void clear_watchdog(void);
 
-void main(void) 
-{ 
+void main(void)
+{
 	init();
 
 /*
 strcpypgm2ram(debug_string, "STN\r\n");
 nmea_queue_message_to_send(debug_string);
 */
-	
-	while(1)		
+
+	while(1)
 	{
 		clear_watchdog();
-				
+
 		// process next waiting received nmea message
 		nmea_process_next_message();
 
@@ -218,17 +233,17 @@ nmea_queue_message_to_send(debug_string);
 
 		// queue next nmea message
 		queue_next_nmea_message();
-	
+
 		// queue next seatalk messages
 		queue_next_seatalk_message();
 
 		// send next queued nmea message
 		// nothing to do, handled by interrupts automatically
 
-		// send next queued seatalk message 
+		// send next queued seatalk message
 		seatalk_send_next_message();
 	}
-} 
+}
 
 static void clear_watchdog(void)
 {
@@ -309,12 +324,12 @@ static void queue_next_seatalk_message(void)
 		}
 		next_temperature_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_TEMPERATURE];
 	}
-	
-	// SEATALK_ID_TRIPLOG	
+
+	// SEATALK_ID_TRIPLOG
 	if(millisecond_tick_count>next_triplog_send_time && seatalk_settings[SEATALK_TRIPLOG]>0)
 	{
 		do_send=0;
-				
+
 		if(millisecond_tick_count-nmea_trip_receive_time<MAX_DATA_AGE_MS)
 		{
 			do_send++;
@@ -323,7 +338,7 @@ static void queue_next_seatalk_message(void)
 		{
 			nmea_trip=FLT_MAX;
 		}
-		
+
 		if(millisecond_tick_count-nmea_log_receive_time<MAX_DATA_AGE_MS)
 		{
 			do_send++;
@@ -332,15 +347,15 @@ static void queue_next_seatalk_message(void)
 		{
 			nmea_log=FLT_MAX;
 		}
-		
+
 		if(do_send)
 		{
 			seatalk_triplog_send(nmea_trip, nmea_log);
 		}
-		
+
 		next_triplog_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_TRIPLOG];
 	}
-	
+
 	// SEATALK_ID_TRIP
 	if(millisecond_tick_count>next_trip_send_time && seatalk_settings[SEATALK_TRIP]>0)
 	{
@@ -360,7 +375,7 @@ static void queue_next_seatalk_message(void)
 		}
 		next_log_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_LOG];
 	}
-	
+
 	// SEATALK_ID_APPARENT_WIND_ANGLE
 	if(millisecond_tick_count>next_apparent_wind_angle_send_time && seatalk_settings[SEATALK_APPARENT_WIND_ANGLE]>0)
 	{
@@ -370,7 +385,7 @@ static void queue_next_seatalk_message(void)
 		}
 		next_apparent_wind_angle_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_APPARENT_WIND_ANGLE];
 	}
-	
+
 	// SEATALK_ID_APPARENT_WIND_SPEED
 	if(millisecond_tick_count>next_apparent_wind_speed_send_time && seatalk_settings[SEATALK_APPARENT_WIND_SPEED]>0)
 	{
@@ -380,7 +395,7 @@ static void queue_next_seatalk_message(void)
 		}
 		next_apparent_wind_speed_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_APPARENT_WIND_SPEED];
 	}
-	
+
 	// SEATALK_ID_SOG
 	if(millisecond_tick_count>next_sog_send_time && seatalk_settings[SEATALK_SOG]>0)
 	{
@@ -390,7 +405,7 @@ static void queue_next_seatalk_message(void)
 		}
 		next_sog_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_SOG];
 	}
-	
+
 	// SEATALK_ID_COG
 	if(millisecond_tick_count>next_cog_send_time && seatalk_settings[SEATALK_COG]>0)
 	{
@@ -406,28 +421,28 @@ static void queue_next_seatalk_message(void)
 	{
 		if(millisecond_tick_count-nmea_time_receive_time<MAX_DATA_AGE_MS)
 		{
-			seatalk_gmt_send(nmea_time); 
+			seatalk_gmt_send(nmea_time);
 		}
 		next_gmt_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_GMT];
 	}
-	
+
 	// SEATALK_ID_DATE
 	if(millisecond_tick_count>next_date_send_time && seatalk_settings[SEATALK_DATE]>0)
 	{
 		if(millisecond_tick_count-nmea_date_receive_time<MAX_DATA_AGE_MS)
 		{
-			seatalk_date_send(nmea_date); 
+			seatalk_date_send(nmea_date);
 		}
 		next_date_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_DATE];
 	}
-	
+
 	// SEATALK_ID_LATITUDE
 	if(millisecond_tick_count>next_latitude_send_time && seatalk_settings[SEATALK_LATITUDE]>0)
 	{
 		if(millisecond_tick_count-nmea_latitude_receive_time<MAX_DATA_AGE_MS)
-		{	
-			seatalk_latitude_send(nmea_latitude_degrees, nmea_latitude_minutes); 
-		}		
+		{
+			seatalk_latitude_send(nmea_latitude_degrees, nmea_latitude_minutes);
+		}
 		next_latitude_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_LATITUDE];
 	}
 
@@ -436,11 +451,87 @@ static void queue_next_seatalk_message(void)
 	{
 		if(millisecond_tick_count-nmea_longitude_receive_time<MAX_DATA_AGE_MS)
 		{
-			seatalk_longitude_send(nmea_longitude_degrees, nmea_longitude_minutes); 
+			seatalk_longitude_send(nmea_longitude_degrees, nmea_longitude_minutes);
 		}
 		next_longitude_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_LONGITUDE];
 	}
-			
+
+	// SEATALK_ID_HEADING
+	if(millisecond_tick_count>next_heading_send_time && seatalk_settings[SEATALK_HEADING]>0)
+	{
+		if(millisecond_tick_count-nmea_heading_magnetic_receive_time<MAX_DATA_AGE_MS)
+		{
+			seatalk_heading_send(nmea_heading_magnetic);
+		}
+		next_heading_send_time=millisecond_tick_count+1000UL*(unsigned long)seatalk_settings[SEATALK_HEADING];
+	}
+
+/*
+	// SEATALK_ID_LAMP
+	if (millisecond_tick_count > next_lamp_send_time && seatalk_settings[SEATALK_LAMP] > 0)
+	{
+		if (millisecond_tick_count - nmea_xte_receive_time < MAX_DATA_AGE_MS)
+		{
+			seatalk_lamp_send(debug_test_lamp++);
+		}
+		next_lamp_send_time = millisecond_tick_count + 1000UL * (unsigned long)seatalk_settings[SEATALK_LAMP];
+	}
+*/
+
+	// SEATALK_ID_NAV_TO_WP_INFO
+	if (millisecond_tick_count > next_lamp_send_time && seatalk_settings[SEATALK_LAMP] > 0)
+	{
+		do_send = 0;
+
+		if (millisecond_tick_count - nmea_xte_receive_time < MAX_DATA_AGE_MS)
+		{
+			do_send++;
+		}
+		else
+		{
+			nmea_xte = FLT_MAX;
+		}
+		if (millisecond_tick_count - nmea_direction_to_steer_receive_time < MAX_DATA_AGE_MS)
+		{
+			do_send++;
+		}
+		else
+		{
+			nmea_direction_to_steer = '\0';
+		}
+		if (millisecond_tick_count - nmea_destination_waypoint_name_receive_time < MAX_DATA_AGE_MS)
+		{
+			do_send++;
+		}
+		else
+		{
+			nmea_destination_waypoint_name[0] = '\0';
+		}
+		if (millisecond_tick_count - nmea_distance_to_destination_receive_time < MAX_DATA_AGE_MS)
+		{
+			do_send++;
+		}
+		else
+		{
+			nmea_distance_to_destination = FLT_MAX;
+		}
+		if (millisecond_tick_count - nmea_bearing_to_destination_receive_time < MAX_DATA_AGE_MS)
+		{
+			do_send++;
+		}
+		else
+		{
+			nmea_bearing_to_destination = FLT_MAX;
+		}
+
+		if (do_send)
+		{
+			seatalk_nav_to_wp_info_send(nmea_xte, nmea_direction_to_steer, nmea_destination_waypoint_name, nmea_distance_to_destination, nmea_bearing_to_destination);
+		}
+		next_nav_to_wp_info_send_time = millisecond_tick_count + 1000UL * (unsigned long)seatalk_settings[SEATALK_NAV_TO_WP_INFO];
+		next_lamp_send_time = millisecond_tick_count + 1000UL * (unsigned long)seatalk_settings[SEATALK_LAMP];
+	}
+
 	// seatalk add more message types here
 }
 
@@ -489,10 +580,10 @@ static void queue_next_nmea_message(void)
 			heading_true=util_calc_heading_true(seatalk_heading_magnetic, seatalk_variation);
 			do_send++;
 		}
-		else 
+		else
 		{
 			heading_true=FLT_MAX;
-		} 
+		}
 		if(millisecond_tick_count-seatalk_heading_magnetic_receive_time<MAX_DATA_AGE_MS)
 		{
 			do_send++;
@@ -502,11 +593,11 @@ static void queue_next_nmea_message(void)
 			seatalk_heading_magnetic=FLT_MAX;
 		}
 		if(do_send>0)
-		{  
+		{
 			nmea_VHW_send(heading_true, seatalk_heading_magnetic, seatalk_boatspeed);
 		}
 		next_vhw_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_VHW];
-	}		
+	}
 
 	// RSA
 	if(millisecond_tick_count>next_rsa_send_time  && nmea_settings[NMEA_RSA]>0)
@@ -569,7 +660,7 @@ static void queue_next_nmea_message(void)
 
 		next_hdt_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_HDT];
 	}
-	
+
 	// MTW
 	if(millisecond_tick_count>next_mtw_send_time && nmea_settings[NMEA_MTW]>0)
 	{
@@ -579,7 +670,7 @@ static void queue_next_nmea_message(void)
 		}
 		next_mtw_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_MTW];
 	}
-	
+
 	// VLW
 	if(millisecond_tick_count>next_vlw_send_time && nmea_settings[NMEA_VLW]>0)
 	{
@@ -608,7 +699,7 @@ static void queue_next_nmea_message(void)
 
 		next_vlw_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_VLW];
 	}
-	
+
 	// VWR
 	if(millisecond_tick_count>next_vwr_send_time && nmea_settings[NMEA_VWR]>0)
 	{
@@ -637,20 +728,7 @@ static void queue_next_nmea_message(void)
 
 		next_vwr_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_VWR];
 	}
-	
-	// VWT
-	if(millisecond_tick_count>next_vwt_send_time && nmea_settings[NMEA_VWT]>0)
-	{
-		if(millisecond_tick_count-seatalk_apparent_wind_angle_receive_time<MAX_DATA_AGE_MS &&
-			millisecond_tick_count-seatalk_apparent_wind_speed_receive_time<MAX_DATA_AGE_MS &&
-			millisecond_tick_count-seatalk_boatspeed_receive_time<MAX_DATA_AGE_MS)
-		{
-			nmea_VWT_send(seatalk_apparent_wind_angle, seatalk_apparent_wind_speed, seatalk_boatspeed);
-		}
 
-		next_vwt_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_VWT];
-	}
-	
 	// MWV
 	if(millisecond_tick_count>next_mwv_send_time && nmea_settings[NMEA_MWV]>0)
 	{
@@ -686,21 +764,21 @@ static void queue_next_nmea_message(void)
 		}
 		next_mwv_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_MWV];
 	}
-	
+
 	// RMC
 	if(millisecond_tick_count>next_rmc_send_time && nmea_settings[NMEA_RMC]>0)
 	{
 		do_send=0;
-		
+
 		if(millisecond_tick_count-seatalk_gmt_receive_time<MAX_DATA_AGE_MS)
 		{
 			nav_data.time=seatalk_gmt;
 			do_send++;
-		}	
+		}
 		else
 		{
 			nav_data.time.hour=UCHAR_MAX;
-		}	
+		}
 		if(millisecond_tick_count-seatalk_latitude_receive_time<MAX_DATA_AGE_MS)
 		{
 			nav_data.latitude_degrees=seatalk_latitude_degrees;
@@ -710,7 +788,7 @@ static void queue_next_nmea_message(void)
 		else
 		{
 			nav_data.latitude_degrees=INT_MAX;
-		}			
+		}
 		if(millisecond_tick_count-seatalk_longitude_receive_time<MAX_DATA_AGE_MS)
 		{
 			nav_data.longitude_degrees=seatalk_longitude_degrees;
@@ -738,12 +816,12 @@ static void queue_next_nmea_message(void)
 		else
 		{
 			nav_data.cog=FLT_MAX;
-		}	
+		}
 		if(millisecond_tick_count-seatalk_date_receive_time<MAX_DATA_AGE_MS)
 		{
 			nav_data.date=seatalk_date;
 			do_send++;
-		}	
+		}
 		else
 		{
 			nav_data.date.year=UCHAR_MAX;
@@ -756,14 +834,14 @@ static void queue_next_nmea_message(void)
 		else
 		{
 			nav_data.variation=FLT_MAX;
-		}	
+		}
 		if(do_send>0)
 		{
 			nmea_RMC_send(&nav_data);
 		}
 		next_rmc_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_RMC];
-	}	
-	
+	}
+
 	// GLL
 	if(millisecond_tick_count>next_gll_send_time && nmea_settings[NMEA_GLL]>0)
 	{
@@ -778,7 +856,7 @@ static void queue_next_nmea_message(void)
 		else
 		{
 			nav_data.latitude_degrees=INT_MAX;
-		}			
+		}
 		if(millisecond_tick_count-seatalk_longitude_receive_time<MAX_DATA_AGE_MS)
 		{
 			nav_data.longitude_degrees=seatalk_longitude_degrees;
@@ -788,24 +866,24 @@ static void queue_next_nmea_message(void)
 		else
 		{
 			nav_data.longitude_degrees=INT_MAX;
-		}		
+		}
 		if(millisecond_tick_count-seatalk_gmt_receive_time<MAX_DATA_AGE_MS)
 		{
 			nav_data.time=seatalk_gmt;
 			do_send++;
-		}	
+		}
 		else
 		{
 			nav_data.time.hour=UCHAR_MAX;
-		}	
-	
+		}
+
 		if(do_send>0)
 		{
 			nmea_GLL_send(&nav_data);
 		}
 		next_gll_send_time=millisecond_tick_count+1000UL*(unsigned long)nmea_settings[NMEA_GLL];
-	}	
-	
+	}
+
 	// nmea add more message types here
 }
 
@@ -817,7 +895,7 @@ static void init(void)
 	OSCCONbits.IDLEN=0;				// SLEEP enters sleep mode, section 2.2.4
 	OSCCONbits.SCS=0;				// system clock determined by config bits, section 2.3
 	OSCTUNEbits.PLLEN=1;
-	
+
 	serial1_setup();					// initialize serial port
 
 	// set all pins as digital i/o
@@ -827,7 +905,7 @@ static void init(void)
 
 	for(i=0; i<NUMBER_NMEA_MESSAGES; i++)
 	{
-		nmea_messages_in[i][0]=MS_DONE;			
+		nmea_messages_in[i][0]=MS_DONE;
 	}
 
 	// seatalk
@@ -837,8 +915,8 @@ static void init(void)
 	if(int_EEPROM_getc(0)!='Y' ||		// check settings initialized
 		int_EEPROM_getc(1)!='A' ||
 		int_EEPROM_getc(2)!='P' ||
-		int_EEPROM_getc(3)!='P')
-	{	
+		int_EEPROM_getc(3)!='0')
+	{
 		// initialize settings
 		for(i=0; i<seatalk_default_settings_size; i++)
 		{
@@ -853,7 +931,7 @@ static void init(void)
 		int_EEPROM_putc(0, 'Y');
 		int_EEPROM_putc(1, 'A');
 		int_EEPROM_putc(2, 'P');
-		int_EEPROM_putc(3, 'P');
+		int_EEPROM_putc(3, '0');
 	}
 
 	for(i=0; i<seatalk_default_settings_size; i++)
@@ -866,7 +944,7 @@ static void init(void)
 		nmea_settings[i]=int_EEPROM_getc(NMEA_SETTINGS_BASE+i);
 	}
 
-    // setup timer 6, this is used for seatalk and the tick timer 
+    // setup timer 6, this is used for seatalk and the tick timer
     T6CONbits.TMR6ON=0;			// disable timer 6
     T6CONbits.T6CKPS=0;         // set prescalar is 1
     T6CONbits.T6OUTPS=0;     	// set postscalar to 1
@@ -876,84 +954,84 @@ static void init(void)
     T6CONbits.TMR6ON=1;         // enable timer 6
 
 	RCONbits.IPEN=0;	        // disable interrupt priority, section 9.2
-    PIE5bits.TMR6IE=1;          // enable timer6 interrupt 
+    PIE5bits.TMR6IE=1;          // enable timer6 interrupt
 	INTCONbits.PEIE=1;          // enable all unmasked peripheral interrupts
 	INTCONbits.GIE=1;           // globally enable interrupts
-}		
+}
 
 static void seatalk_message_handler(unsigned char message_type)
-{	
+{
 	switch(message_type)
 	{
 		case SEATALK_ID_DEPTH:
-			seatalk_depth_receive_time=millisecond_tick_count;	
+			seatalk_depth_receive_time=millisecond_tick_count;
 			break;
 
 		case SEATALK_ID_BOATSPEED:
-			seatalk_boatspeed_receive_time=millisecond_tick_count;		
+			seatalk_boatspeed_receive_time=millisecond_tick_count;
 			break;
 
-		case SEATALK_ID_HEADING_MAGNETIC:
-			seatalk_heading_magnetic_receive_time=millisecond_tick_count;		
+		case SEATALK_ID_HEADING:
+			seatalk_heading_magnetic_receive_time=millisecond_tick_count;
 			break;
 
-		case SEATALK_ID_RUDDER:
-			seatalk_rudder_receive_time=millisecond_tick_count;		
+		case SEATALK_ID_COMP_RUDD:
+			seatalk_rudder_receive_time=millisecond_tick_count;
 			break;
 
 		case SEATALK_ID_VARIATION:
-			seatalk_variation_receive_time=millisecond_tick_count;		
+			seatalk_variation_receive_time=millisecond_tick_count;
 			break;
 
 		case SEATALK_ID_TEMPERATURE:
-			seatalk_temperature_receive_time=millisecond_tick_count;		
+			seatalk_temperature_receive_time=millisecond_tick_count;
 			break;
-			
+
 		case SEATALK_ID_TRIP:
-			seatalk_trip_receive_time=millisecond_tick_count;		
+			seatalk_trip_receive_time=millisecond_tick_count;
 			break;
-			
+
 		case SEATALK_ID_LOG:
-			seatalk_log_receive_time=millisecond_tick_count;		
+			seatalk_log_receive_time=millisecond_tick_count;
 			break;
-			
+
 		case SEATALK_ID_TRIPLOG:
-			seatalk_log_receive_time=millisecond_tick_count;		
-			seatalk_trip_receive_time=millisecond_tick_count;		
+			seatalk_log_receive_time=millisecond_tick_count;
+			seatalk_trip_receive_time=millisecond_tick_count;
 			break;
 
 		case SEATALK_ID_APPARENT_WIND_ANGLE:
-			seatalk_apparent_wind_angle_receive_time=millisecond_tick_count;		
+			seatalk_apparent_wind_angle_receive_time=millisecond_tick_count;
 			break;
-			
+
 		case SEATALK_ID_APPARENT_WIND_SPEED:
-			seatalk_apparent_wind_speed_receive_time=millisecond_tick_count;		
+			seatalk_apparent_wind_speed_receive_time=millisecond_tick_count;
 			break;
 
 		case SEATALK_ID_SOG:
-			seatalk_sog_receive_time=millisecond_tick_count;		
+			seatalk_sog_receive_time=millisecond_tick_count;
 			break;
-			
+
 		case SEATALK_ID_COG:
-			seatalk_cog_receive_time=millisecond_tick_count;		
+			seatalk_cog_receive_time=millisecond_tick_count;
 			break;
-			
+
 		case SEATALK_ID_LATITUDE:
-			seatalk_latitude_receive_time=millisecond_tick_count;		
+			seatalk_latitude_receive_time=millisecond_tick_count;
 			break;
-			
+
 		case SEATALK_ID_LONGITUDE:
-			seatalk_longitude_receive_time=millisecond_tick_count;		
-			break;	
-			
+			seatalk_longitude_receive_time=millisecond_tick_count;
+			break;
+
 		case SEATALK_ID_GMT:
-			seatalk_gmt_receive_time=millisecond_tick_count;		
+			seatalk_gmt_receive_time=millisecond_tick_count;
 			break;
-			
+
 		case SEATALK_ID_DATE:
-			seatalk_date_receive_time=millisecond_tick_count;		
+			seatalk_date_receive_time=millisecond_tick_count;
 			break;
-									
+
 		// add more seatalk handled messages here
 
 		default:
@@ -966,10 +1044,10 @@ void low_interrupt(void)
 {
 	_asm GOTO low_isr _endasm
 }
-	
+
 #pragma code
 
-#pragma interruptlow low_isr 
+#pragma interruptlow low_isr
 void low_isr(void)
 {
 	static unsigned char nmea_in_current_writing_message=0;
@@ -977,7 +1055,7 @@ void low_isr(void)
 	static unsigned char nmea_in_waiting_for_message_to_start=TRUE;
 	unsigned char read_byte;
 	static unsigned char millisecond_timer_counter=0;
-	
+
 	// check tick timer
 	if(PIE5bits.TMR6IE && PIR5bits.TMR6IF)
 	{
@@ -985,8 +1063,8 @@ void low_isr(void)
 
 		do_seatalk_read();
 		do_seatalk_write();
-		
-		millisecond_timer_counter++;	
+
+		millisecond_timer_counter++;
 
 		if(millisecond_timer_counter==38)
 		{
@@ -1017,42 +1095,42 @@ void low_isr(void)
 	{
 		read_byte=RCREG1;
 		PIR1bits.RC1IF=0;
-		
+
 		if(RCSTA1bits.OERR)
 		{
 			RCSTA1bits.CREN=0;
 			RCSTA1bits.CREN=1;
-		}	
-		
+		}
+
 		if(nmea_in_waiting_for_message_to_start)
-		{			
+		{
 			if(read_byte=='$' || read_byte=='#')
-			{	
+			{
 				for(nmea_in_current_writing_message=0; nmea_in_current_writing_message<NUMBER_NMEA_MESSAGES; nmea_in_current_writing_message++)
 				{
 					if(nmea_messages_in[nmea_in_current_writing_message][0]==MS_DONE)
 					{
 						nmea_in_waiting_for_message_to_start=FALSE;
 						nmea_messages_in[nmea_in_current_writing_message][1]=read_byte;
-						nmea_in_next_writing_position=2;							
+						nmea_in_next_writing_position=2;
 						break;
-					}	
+					}
 				}
-			}	
-		}	
+			}
+		}
 		else
-		{			
+		{
 			if(nmea_in_next_writing_position<NMEA_MESSAGE_STORAGE-1)
 			{
-				nmea_messages_in[nmea_in_current_writing_message][nmea_in_next_writing_position]=read_byte;							
+				nmea_messages_in[nmea_in_current_writing_message][nmea_in_next_writing_position]=read_byte;
 				if(read_byte=='\r')
-				{				
-					nmea_messages_in[nmea_in_current_writing_message][nmea_in_next_writing_position+1]='\0';											
+				{
+					nmea_messages_in[nmea_in_current_writing_message][nmea_in_next_writing_position+1]='\0';
 					nmea_messages_in[nmea_in_current_writing_message][0]=MS_READY;
 					nmea_in_waiting_for_message_to_start=TRUE;
-				}	
+				}
 				else
-				{				
+				{
 					nmea_in_next_writing_position++;
 				}
 			}
@@ -1061,7 +1139,7 @@ void low_isr(void)
 				// oversize message, abandon
 				nmea_in_waiting_for_message_to_start=TRUE;
 				nmea_messages_in[nmea_in_current_writing_message][0]=MS_DONE;
-			}		
-		}	
-	}	
+			}
+		}
+	}
 }

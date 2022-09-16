@@ -27,94 +27,17 @@ unsigned int util_abs(signed int i)
 	return (unsigned int)i;
 }	
 
-void util_calc_true_wind_from_apparent(float apparent_wind_speed, float apparent_wind_angle, float boatspeed, float *true_wind_speed, float *true_wind_angle)
-{
-	float x;
-	float y;
-	float z;
-	float t;
-	
-	if(boatspeed<0.01f)
-	{
-		*true_wind_speed=apparent_wind_speed;
-		*true_wind_angle=apparent_wind_angle;
-	}
-	else
-	{
-		x=boatspeed*sin(apparent_wind_angle/DEGREES_TO_RADIANS);
-		y=boatspeed*cos(apparent_wind_angle/DEGREES_TO_RADIANS);
-		z=apparent_wind_speed-y;
-		*true_wind_speed=sqrt(z*z+x*x);
-		if(*true_wind_speed==0.0f)
-		{
-			*true_wind_angle=0.0f;
-		}
-		else
-		{
-			t=(M_PI_2-apparent_wind_angle/DEGREES_TO_RADIANS)+acos(x/(*true_wind_speed));
-			*true_wind_angle=M_PI-t;
-		}
-		*true_wind_angle*=DEGREES_TO_RADIANS;
-		if(*true_wind_angle<0.0f)
-		{
-			*true_wind_angle+=360.0f;
-		}
-	}
-}	
-
-void util_calc_apparent_wind_from_true(float true_wind_speed, float true_wind_angle, float boatspeed, float *apparent_wind_speed, float *apparent_wind_angle)
-{
-	float a;
-	float b;
-	
-	if(true_wind_angle<1.0f || true_wind_angle>359.0f || boatspeed<0.1f)
-	{
-		*apparent_wind_angle=true_wind_angle;
-		*apparent_wind_speed=true_wind_speed+boatspeed;
-		return;
-	}	
-	
-	if(true_wind_speed<0.1f)
-	{
-		*apparent_wind_angle=0.0f;
-		*apparent_wind_speed=boatspeed;
-		return;
-	}	
-	
-	if(true_wind_angle>179.0f || true_wind_angle<181.0f)
-	{
-		*apparent_wind_angle=true_wind_angle;
-		*apparent_wind_speed=true_wind_speed-boatspeed;
-		if(*apparent_wind_speed<0.0f)
-		{
-			*apparent_wind_speed=-*apparent_wind_speed;
-			*apparent_wind_angle=0.0f;
-		}
-		return;	
-	}	
-		
-	a=true_wind_speed*sin(true_wind_angle/DEGREES_TO_RADIANS);
-	b=true_wind_speed*cos(true_wind_angle/DEGREES_TO_RADIANS);
-	*apparent_wind_speed=sqrt(a*a+(b+boatspeed)*(b+boatspeed));
-	*apparent_wind_angle=atan((b+boatspeed)/a);
-	*apparent_wind_angle*=DEGREES_TO_RADIANS;
-	if(*apparent_wind_angle<0.0f)
-	{
-		*apparent_wind_angle+=360.0f;
-	}
-}
-	
 float frac(float f)
 {
-	if(f>=0.0f)
-	{
-		return f-floor(f);
-	}
-	else
-	{
-		return f-ceil(f);
-	}
-}	
+       if(f>=0.0f)
+       {
+               return f-floor(f);
+       }
+       else
+       {
+               return f-ceil(f);
+       }
+}
 
 float util_calc_heading_true(float heading_magnetic, float variation)
 {

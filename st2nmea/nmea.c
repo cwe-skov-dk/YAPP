@@ -62,14 +62,12 @@ extern float nmea_xte;
 extern unsigned long nmea_xte_receive_time;
 extern char nmea_direction_to_steer;
 extern unsigned long nmea_direction_to_steer_receive_time;
-extern char nmea_destination_waypoint_name[];
+extern char nmea_destination_waypoint_name[12];
 extern unsigned long nmea_destination_waypoint_name_receive_time;
 extern float nmea_distance_to_destination;
 extern unsigned long nmea_distance_to_destination_receive_time;
 extern float nmea_bearing_to_destination;
 extern unsigned long nmea_bearing_to_destination_receive_time;
-extern unsigned char nmea_waypoint_arrived;
-extern unsigned long nmea_waypoint_arrived_receive_time;
 static unsigned char nmea_calculate_checksum(char *message);
 static void nmea_add_checksum_and_send(char *message);
 static void nmea_add_header(nmea_message_type_t nmea_message_type);
@@ -78,7 +76,7 @@ static void nmea_add_latitude(nav_data_t *nav_data);
 static void nmea_add_longitude(nav_data_t *nav_data);
 
 // add new message types here
-static const rom char *nmea_headers="DPT" "DBT" "VHW" "RSA" "HDM" "HDG" "HDT" "MTW" "VLW" "VWR" "VWT" "MWV" "RMC" "GLL";
+static const rom char *nmea_headers="DPT" "DBT" "VHW" "RSA" "HDM" "HDG" "HDT" "MTW" "VLW" "VWR" "VWT" "MWV" "RMB" "RMC" "GLL";
 
 static void nmea_basic_float_parse(unsigned char message_number, unsigned char field, float *result, unsigned long *time);
 static void nmea_add_time(time_t time);
@@ -90,24 +88,24 @@ nmea_message_type_t nmea_identify_message_type(char *message)
 {
 	unsigned char i;
 	const rom char *next_header=nmea_headers;
-	
+
 	for(i=0; i<NMEA_UNKNOWN; i++)
 	{
 		if(*next_header==*message && *(next_header+1)==*(message+1) && *(next_header+2)==*(message+2))
 		{
 			return i;
-		}	
+		}
 		next_header+=3;
 	}
-	
-	return NMEA_UNKNOWN;	
+
+	return NMEA_UNKNOWN;
 }
 
 char *nmea_get_name_from_type(nmea_message_type_t message_type)
 {
 	static char name[4];
 	unsigned char header_pos=message_type*3;
-	
+
 	if(message_type<NMEA_UNKNOWN)
 	{
 		memcpypgm2ram(name, nmea_headers+3*message_type, 3);
@@ -116,7 +114,7 @@ char *nmea_get_name_from_type(nmea_message_type_t message_type)
 	else
 	{
 		strcpypgm2ram(name, "???");
-	}		
+	}
 
 	return name;
 }
@@ -132,18 +130,18 @@ static unsigned char nmea_calculate_checksum(char *message)
 	{
 		checksum^=message[i+1];
 	}
-	
+
 	return checksum;
 }
 
 static void nmea_add_checksum_and_send(char *message)
 {
 	char checksum_text[3];
-	unsigned char checksum=nmea_calculate_checksum(message);	
+	unsigned char checksum=nmea_calculate_checksum(message);
 
-	strcatpgm2ram(message, "*");		
-	strcat(message, util_btoh(checksum));	
-	strcatpgm2ram(message, "\r\n");		
+	strcatpgm2ram(message, "*");
+	strcat(message, util_btoh(checksum));
+	strcatpgm2ram(message, "\r\n");
 	nmea_queue_message_to_send(message);
 }
 
@@ -178,14 +176,12 @@ static void nmea_basic_float_parse(unsigned char message_number, unsigned char f
 		sscanf(next_message_field, "%f", result);
 		*time=millisecond_tick_count;
 	}
-}	
+}
 
 void nmea_process_next_message(void)
 {
 	static unsigned char message_position=0;
 	nmea_message_type_t message_type;
-	float true_wind_speed;
-	float true_wind_angle;
 	float units_factor;
 	float coord;
 
@@ -194,7 +190,7 @@ void nmea_process_next_message(void)
 	{
 	    // set message state to reading to stop it being overwritten
 		nmea_messages_in[message_position][0]=MS_READING;
-		
+
 		if(*(nmea_messages_in[message_position]+1)=='#')
 		{
 			// config message
@@ -217,8 +213,8 @@ void nmea_process_next_message(void)
 
 				case NMEA_VHW:
 					nmea_basic_float_parse(message_position, 1, &nmea_heading_true, &nmea_heading_true_receive_time);
-					nmea_basic_float_parse(message_position, 3, &nmea_heading_magnetic, &nmea_heading_magnetic_receive_time);					
-					nmea_basic_float_parse(message_position, 5, &nmea_boatspeed, &nmea_boatspeed_receive_time);									
+					nmea_basic_float_parse(message_position, 3, &nmea_heading_magnetic, &nmea_heading_magnetic_receive_time);
+					nmea_basic_float_parse(message_position, 5, &nmea_boatspeed, &nmea_boatspeed_receive_time);
 					break;
 
 				case NMEA_RSA:
@@ -236,11 +232,11 @@ void nmea_process_next_message(void)
 					break;
 
 				case NMEA_HDM:
-					nmea_basic_float_parse(message_position, 1, &nmea_heading_magnetic, &nmea_heading_magnetic_receive_time);												
+					nmea_basic_float_parse(message_position, 1, &nmea_heading_magnetic, &nmea_heading_magnetic_receive_time);
 					break;
 
 				case NMEA_HDG:
-					nmea_basic_float_parse(message_position, 1, &nmea_heading_magnetic, &nmea_heading_magnetic_receive_time);												
+					nmea_basic_float_parse(message_position, 1, &nmea_heading_magnetic, &nmea_heading_magnetic_receive_time);
 
 					if(util_get_field(4, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
 					{
@@ -266,23 +262,23 @@ void nmea_process_next_message(void)
 						if(nmea_heading_magnetic<0.0f)
 						{
 							nmea_heading_magnetic+=360.0f;
-						}	
+						}
 						else if(nmea_heading_magnetic>360.0f)
 						{
 							nmea_heading_magnetic-=360.0f;
-						}	
-					}	
+						}
+					}
 					break;
-					
+
 				case NMEA_MTW:
 					nmea_basic_float_parse(message_position, 1, &nmea_temperature, &nmea_temperature_receive_time);
 					break;
-					
+
 				case NMEA_VLW:
 					nmea_basic_float_parse(message_position, 1, &nmea_log, &nmea_log_receive_time);
 					nmea_basic_float_parse(message_position, 3, &nmea_trip, &nmea_trip_receive_time);
 					break;
-					
+
 				case NMEA_VWR:
 					if(util_get_field(1, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
 					{
@@ -293,71 +289,35 @@ void nmea_process_next_message(void)
 							if(*next_message_field=='L')
 							{
 								nmea_apparent_wind_angle=360.0f-nmea_apparent_wind_angle;
-							}	
+							}
 							nmea_apparent_wind_angle_receive_time=millisecond_tick_count;
 						}
-					}	
-					nmea_basic_float_parse(message_position, 3, &nmea_apparent_wind_speed, &nmea_apparent_wind_speed_receive_time);
-					break;				
-					
-				case NMEA_VWT:
-					// give up if received apparent wind data recently
-					if(millisecond_tick_count-nmea_apparent_wind_angle_receive_time<MAX_DATA_AGE_MS &&
-						millisecond_tick_count-nmea_apparent_wind_speed_receive_time<MAX_DATA_AGE_MS)
-					{
-						break;
-					}		
-					
-					// give up if not received boat speed data recently
-					if(millisecond_tick_count-nmea_boatspeed_receive_time>MAX_DATA_AGE_MS)
-					{
-						break;
 					}
-					
-					if(util_get_field(1, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
-					{
-						sscanf(next_message_field, "%f", &true_wind_angle);
-						util_get_field(2, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
-						if(*next_message_field=='L' || *next_message_field=='R')
-						{
-							if(*next_message_field=='L')
-							{
-								true_wind_angle=360.0f-true_wind_angle;
-							}	
-								
-							if(util_get_field(3, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
-							{
-								sscanf(next_message_field, "%f", &true_wind_speed);
-								util_calc_apparent_wind_from_true(true_wind_speed, true_wind_angle, nmea_boatspeed, &nmea_apparent_wind_speed, &nmea_apparent_wind_angle);
-								nmea_apparent_wind_speed_receive_time=millisecond_tick_count;
-								nmea_apparent_wind_angle_receive_time=millisecond_tick_count;
-							}							
-						}	
-					}	
+					nmea_basic_float_parse(message_position, 3, &nmea_apparent_wind_speed, &nmea_apparent_wind_speed_receive_time);
 					break;
-					
+
 				case NMEA_MWV:
 					util_get_field(5, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 					if(*next_message_field!='A')
 					{
 						break;
 					}
-					
+
 					util_get_field(4, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 					switch(*next_message_field)
 					{
 						case 'N':
 							units_factor=1.0f;
 							break;
-							
+
 						case 'M':
-							units_factor=KNOTS_IN_MPS;		
+							units_factor=KNOTS_IN_MPS;
 							break;
-							
+
 						case 'K':
-							units_factor=KNOTS_IN_KMPH;		
+							units_factor=KNOTS_IN_KMPH;
 							break;
-							
+
 						default:
 							units_factor=FLT_MAX;
 					}
@@ -365,7 +325,7 @@ void nmea_process_next_message(void)
 					{
 						break;
 					}
-						
+
 					util_get_field(2, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 					if(*next_message_field=='T')
 					{
@@ -374,47 +334,73 @@ void nmea_process_next_message(void)
 							millisecond_tick_count-nmea_apparent_wind_speed_receive_time<MAX_DATA_AGE_MS)
 						{
 							break;
-						}		
-						
+						}
+
 						// give up if not received boat speed data recently
 						if(millisecond_tick_count-nmea_boatspeed_receive_time>MAX_DATA_AGE_MS)
 						{
 							break;
 						}
-						
-						if(util_get_field(1, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
-						{
-							sscanf(next_message_field, "%f", &true_wind_angle);
-							if(util_get_field(3, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
-							{
-								sscanf(next_message_field, "%f", &true_wind_speed);
-								true_wind_speed*=units_factor;
-								util_calc_apparent_wind_from_true(true_wind_speed, true_wind_angle, nmea_boatspeed, &nmea_apparent_wind_speed, &nmea_apparent_wind_angle);
-								nmea_apparent_wind_speed_receive_time=millisecond_tick_count;
-								nmea_apparent_wind_angle_receive_time=millisecond_tick_count;
-							}
-						}
 					}
 					else if(*next_message_field=='R')
 					{
 						nmea_basic_float_parse(message_position, 1, &nmea_apparent_wind_angle, &nmea_apparent_wind_angle_receive_time);
-						
+
 						if(util_get_field(3, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
 						{
 							sscanf(next_message_field, "%f", &nmea_apparent_wind_speed);
 							nmea_apparent_wind_speed*=units_factor;
 							nmea_apparent_wind_speed_receive_time=millisecond_tick_count;
 						}
-					}						
+					}
 					break;
-					
+
+				case NMEA_RMB:
+					util_get_field(1, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
+					if(*next_message_field!='A')
+					{
+						break;
+					}
+
+					if (util_get_field(2, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',') > 0)
+					{
+						sscanf(next_message_field, "%f", &nmea_xte);
+						nmea_xte_receive_time = millisecond_tick_count;
+					}
+
+					if (util_get_field(3, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',') > 0)
+					{
+						nmea_direction_to_steer = next_message_field[0];
+						nmea_direction_to_steer_receive_time = millisecond_tick_count;
+					}
+
+					if (util_get_field(5, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',') > 0)
+					{
+						strncpy(nmea_destination_waypoint_name, next_message_field, sizeof(nmea_destination_waypoint_name) - 1);
+						nmea_destination_waypoint_name[sizeof(nmea_destination_waypoint_name) - 1] = '\0';
+						nmea_destination_waypoint_name_receive_time = millisecond_tick_count;
+					}
+
+					if (util_get_field(10, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',') > 0)
+					{
+						sscanf(next_message_field, "%f", &nmea_distance_to_destination);
+						nmea_distance_to_destination_receive_time = millisecond_tick_count;
+					}
+
+					if (util_get_field(11, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',') > 0)
+					{
+						sscanf(next_message_field, "%f", &nmea_bearing_to_destination);
+						nmea_bearing_to_destination_receive_time = millisecond_tick_count;
+					}
+					break;
+
 				case NMEA_RMC:
 					util_get_field(2, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 					if(*next_message_field!='A')
 					{
 						break;
-					}	
-					
+					}
+
 					if(util_get_field(1, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>=6)
 					{
 						nmea_time.hour=(next_message_field[0]-'0')*10+(next_message_field[1]-'0');
@@ -423,15 +409,15 @@ void nmea_process_next_message(void)
 						if(nmea_time.hour<24 && nmea_time.minute<60 && nmea_time.second<60)
 						{
 							nmea_time_receive_time=millisecond_tick_count;
-						}	
-					}	
-		
+						}
+					}
+
 					if(util_get_field(3, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
 					{
 						sscanf(next_message_field, "%f", &coord);
 						nmea_latitude_degrees=(signed int)(coord/100.0f);
 						nmea_latitude_minutes=100.0f*frac(coord/100.0f);
-						
+
 						util_get_field(4, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 						if(*next_message_field=='N' || *next_message_field=='S')
 						{
@@ -441,15 +427,15 @@ void nmea_process_next_message(void)
 								nmea_latitude_minutes=-nmea_latitude_minutes;
 							}
 							nmea_latitude_receive_time=millisecond_tick_count;
-						}	
+						}
 					}
-					
+
 					if(util_get_field(5, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
 					{
 						sscanf(next_message_field, "%f", &coord);
 						nmea_longitude_degrees=(signed int)(coord/100.0f);
 						nmea_longitude_minutes=100.0f*frac(coord/100.0f);
-						
+
 						util_get_field(6, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 						if(*next_message_field=='E' || *next_message_field=='W')
 						{
@@ -457,14 +443,14 @@ void nmea_process_next_message(void)
 							{
 								nmea_longitude_degrees=-nmea_longitude_degrees;
 								nmea_longitude_minutes=-nmea_longitude_minutes;
-							}	
+							}
 							nmea_longitude_receive_time=millisecond_tick_count;
-						}	
+						}
 					}
-						
+
 					nmea_basic_float_parse(message_position, 7, &nmea_sog, &nmea_sog_receive_time);
-					nmea_basic_float_parse(message_position, 8, &nmea_cog, &nmea_cog_receive_time);							
-		
+					nmea_basic_float_parse(message_position, 8, &nmea_cog, &nmea_cog_receive_time);
+
 					if(util_get_field(9, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')==6)
 					{
 						nmea_date.date=(next_message_field[0]-'0')*10+(next_message_field[1]-'0');
@@ -473,9 +459,9 @@ void nmea_process_next_message(void)
 						if(nmea_date.month<13 && nmea_date.date<32)
 						{
 							nmea_date_receive_time=millisecond_tick_count;
-						}	
+						}
 					}
-					
+
 					if(util_get_field(10, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
 					{
 						sscanf(next_message_field, "%f", &nmea_variation);
@@ -485,26 +471,26 @@ void nmea_process_next_message(void)
 							if(*next_message_field=='W')
 							{
 								nmea_variation=-nmea_variation;
-							}	
+							}
 							nmea_variation_receive_time=millisecond_tick_count;
 						}
 						nmea_variation_receive_time=millisecond_tick_count;
 					}
-					break;	
-					
+					break;
+
 				case NMEA_GLL:
 					util_get_field(6, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 					if(*next_message_field!='A')
 					{
 						break;
-					}	
-					
+					}
+
 					if(util_get_field(1, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
 					{
 						sscanf(next_message_field, "%f", &coord);
 						nmea_latitude_degrees=(signed int)(coord/100.0f);
 						nmea_latitude_minutes=100.0f*frac(coord/100.0f);
-						
+
 						util_get_field(2, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 						if(*next_message_field=='N' || *next_message_field=='S')
 						{
@@ -512,17 +498,17 @@ void nmea_process_next_message(void)
 							{
 								nmea_latitude_degrees=-nmea_latitude_degrees;
 								nmea_latitude_minutes=-nmea_latitude_minutes;
-							}	
+							}
 							nmea_latitude_receive_time=millisecond_tick_count;
-						}	
+						}
 					}
-					
+
 					if(util_get_field(3, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>0)
 					{
 						sscanf(next_message_field, "%f", &coord);
 						nmea_longitude_degrees=(signed int)(coord/100.0f);
 						nmea_longitude_minutes=100.0f*frac(coord/100.0f);
-						
+
 						util_get_field(4, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',');
 						if(*next_message_field=='E' || *next_message_field=='W')
 						{
@@ -530,11 +516,11 @@ void nmea_process_next_message(void)
 							{
 								nmea_longitude_degrees=-nmea_longitude_degrees;
 								nmea_longitude_minutes=-nmea_longitude_minutes;
-							}	
+							}
 							nmea_longitude_receive_time=millisecond_tick_count;
-						}	
-					}					
-					
+						}
+					}
+
 					if(util_get_field(5, (char *)(nmea_messages_in[message_position]+1), next_message_field, ',')>=6)
 					{
 						nmea_time.hour=(next_message_field[0]-'0')*10+(next_message_field[1]-'0');
@@ -543,20 +529,20 @@ void nmea_process_next_message(void)
 						if(nmea_time.hour<24 && nmea_time.minute<60 && nmea_time.second<60)
 						{
 							nmea_time_receive_time=millisecond_tick_count;
-						}	
-					}	
-					break;	
-					
+						}
+					}
+					break;
+
 				// nmea add more message types here
-	
+
 				default:
 					break;
 			}
 		}
-		
+
 		// indicate that this message slot is ready to be written to again
-		nmea_messages_in[message_position][0]=MS_DONE;	
-	}	
+		nmea_messages_in[message_position][0]=MS_DONE;
+	}
 
 	message_position++;
 	if(message_position==NUMBER_NMEA_MESSAGES)
@@ -596,7 +582,7 @@ unsigned char nmea_test_checksum(char *message)
 	{
 	    return FALSE;
 	}
-	
+
 	received_checksum=0;
 	for(j=0; j<2; j++)
 	{
@@ -622,7 +608,7 @@ static void nmea_add_header(nmea_message_type_t message_type)
 	strcpypgm2ram(nmea_message, "$II");
 	strcat(nmea_message, nmea_get_name_from_type(message_type));
 	strcatpgm2ram(nmea_message, ",");
-}	
+}
 
 static void nmea_add_basic_float(float value)
 {
@@ -630,7 +616,7 @@ static void nmea_add_basic_float(float value)
 	{
 		strcat(nmea_message, ftoa(value, 1));
 	}
-}	
+}
 
 static void nmea_add_commas(unsigned char c)
 {
@@ -638,8 +624,8 @@ static void nmea_add_commas(unsigned char c)
 	{
 		strcatpgm2ram(nmea_message, ",");
 		c--;
-	}	
-}	
+	}
+}
 
 static void nmea_add_time(time_t time)
 {
@@ -648,13 +634,13 @@ static void nmea_add_time(time_t time)
 		strcat(nmea_message, util_padded_uitoa(time.hour, 2));
 		strcat(nmea_message, util_padded_uitoa(time.minute, 2));
 		strcat(nmea_message, util_padded_uitoa(time.second, 2));
-	}	
+	}
 }
 
 static void nmea_add_latitude(nav_data_t *nav_data)
 {
 	float latitude=fabs((float)nav_data->latitude_degrees*100.0f)+nav_data->latitude_minutes;
-	
+
 	if(nav_data->latitude_degrees!=INT_MAX)
 	{
 		strcat(nmea_message, util_padded_uitoa((unsigned int)latitude, 4));
@@ -663,17 +649,17 @@ static void nmea_add_latitude(nav_data_t *nav_data)
 		if(nav_data->latitude_degrees<0)
 		{
 			strcatpgm2ram(nmea_message, ",S,");
-		}		
+		}
 		else
 		{
 			strcatpgm2ram(nmea_message, ",N,");
-		}	
-	}	
+		}
+	}
 	else
 	{
 		nmea_add_commas(2);
-	}	
-}	
+	}
+}
 
 static void nmea_add_longitude(nav_data_t *nav_data)
 {
@@ -687,18 +673,18 @@ static void nmea_add_longitude(nav_data_t *nav_data)
 		if(nav_data->longitude_degrees<0)
 		{
 			strcatpgm2ram(nmea_message, ",W,");
-		}		
+		}
 		else
 		{
 			strcatpgm2ram(nmea_message, ",E,");
-		}			
-	}	
+		}
+	}
 	else
 	{
 		nmea_add_commas(2);
-	}	
+	}
 }
-	
+
 void nmea_DPT_send(float depth)
 {
 	nmea_add_header(NMEA_DPT);
@@ -731,7 +717,7 @@ void nmea_RSA_send(float rudder)
 {
 	nmea_add_header(NMEA_RSA);
 	nmea_add_basic_float(rudder);
-	strcatpgm2ram(nmea_message, ",A,,");			
+	strcatpgm2ram(nmea_message, ",A,,");
 	nmea_add_checksum_and_send(nmea_message);
 }
 
@@ -739,7 +725,7 @@ void nmea_HDM_send(float heading_magnetic)
 {
 	nmea_add_header(NMEA_HDM);
 	nmea_add_basic_float(heading_magnetic);
-	strcatpgm2ram(nmea_message, ",M");		
+	strcatpgm2ram(nmea_message, ",M");
 	nmea_add_checksum_and_send(nmea_message);
 }
 
@@ -773,7 +759,7 @@ void nmea_HDT_send(float heading_true)
 {
 	nmea_add_header(NMEA_HDT);
 	nmea_add_basic_float(heading_true);
-	strcatpgm2ram(nmea_message, ",M");			
+	strcatpgm2ram(nmea_message, ",M");
 	nmea_add_checksum_and_send(nmea_message);
 }
 
@@ -781,9 +767,9 @@ void nmea_MTW_send(float temperature)
 {
 	nmea_add_header(NMEA_MTW);
 	nmea_add_basic_float(temperature);
-	strcatpgm2ram(nmea_message, ",C");	
+	strcatpgm2ram(nmea_message, ",C");
 	nmea_add_checksum_and_send(nmea_message);
-}	
+}
 
 void nmea_VLW_send(float trip, float log)
 {
@@ -797,7 +783,7 @@ void nmea_VLW_send(float trip, float log)
 	strcatpgm2ram(nmea_message, ",N,,N,,N");
 
 	nmea_add_checksum_and_send(nmea_message);
-}	
+}
 
 void nmea_VWR_send(float apparent_wind_angle, float apparent_wind_speed)
 {
@@ -813,79 +799,39 @@ void nmea_VWR_send(float apparent_wind_angle, float apparent_wind_speed)
 		{
 			strcat(nmea_message, ftoa(360.0f-apparent_wind_angle, 0));
 			strcatpgm2ram(nmea_message, ",L,");
-		}			
+		}
 	}
 	else
 	{
 		nmea_add_commas(2);
-	}	
-	
+	}
+
 	nmea_add_basic_float(apparent_wind_speed);
 	strcatpgm2ram(nmea_message, ",N,,M,,K");
 
 	nmea_add_checksum_and_send(nmea_message);
-}	
-
-void nmea_VWT_send(float apparent_wind_angle, float apparent_wind_speed, float boatspeed)
-{
-	float true_wind_angle;
-	float true_wind_speed;
-	
-	util_calc_true_wind_from_apparent(apparent_wind_speed, apparent_wind_angle, boatspeed, &true_wind_speed, &true_wind_angle);
-
-	nmea_add_header(NMEA_VWT);	
-	if(true_wind_angle<180.0f)
-	{
-		strcat(nmea_message, ftoa(true_wind_angle, 0));
-		strcatpgm2ram(nmea_message, ",R,");
-	}
-	else
-	{
-		strcat(nmea_message, ftoa(360.0f-true_wind_angle, 0));
-		strcatpgm2ram(nmea_message, ",L,");
-	}			
-
-	strcat(nmea_message, ftoa(true_wind_speed, 1));
-	strcatpgm2ram(nmea_message, ",N,,M,,K");
-
-	nmea_add_checksum_and_send(nmea_message);
-}	
+}
 
 void nmea_MWV_send(float apparent_wind_angle, float apparent_wind_speed, float boatspeed)
 {
-	float true_wind_angle;
-	float true_wind_speed;
-
-	nmea_add_header(NMEA_MWV);	
-	nmea_add_basic_float(apparent_wind_angle);	
+	nmea_add_header(NMEA_MWV);
+	nmea_add_basic_float(apparent_wind_angle);
 	strcatpgm2ram(nmea_message, ",R,");
-	nmea_add_basic_float(apparent_wind_speed);	
+	nmea_add_basic_float(apparent_wind_speed);
 	strcatpgm2ram(nmea_message, ",N,A");
 
 	nmea_add_checksum_and_send(nmea_message);
-	
-	if(apparent_wind_angle!=FLT_MAX && apparent_wind_speed!=FLT_MAX && boatspeed!=FLT_MAX)
-	{
-		util_calc_true_wind_from_apparent(apparent_wind_speed, apparent_wind_angle, boatspeed, &true_wind_speed, &true_wind_angle);
-		nmea_add_header(NMEA_MWV);	
-		strcat(nmea_message, ftoa(true_wind_angle, 0));
-		strcatpgm2ram(nmea_message, ",T,");
-		strcat(nmea_message, ftoa(true_wind_speed, 1));
-		strcatpgm2ram(nmea_message, ",N,A");
-	
-		nmea_add_checksum_and_send(nmea_message);
-	}
-}	
+}
 
 void nmea_RMC_send(nav_data_t *nav_data)
 {
-	nmea_add_header(NMEA_RMC);	
+	nmea_add_header(NMEA_RMC);
 	nmea_add_time(nav_data->time);
 	strcatpgm2ram(nmea_message, ",A,");
-	
+
 	nmea_add_latitude(nav_data);
-	nmea_add_longitude(nav_data);	
-	nmea_add_basic_float(nav_data->sog);	
+	nmea_add_longitude(nav_data);
+	nmea_add_basic_float(nav_data->sog);
 	nmea_add_commas(1);
 	nmea_add_basic_float(nav_data->cog);
 	nmea_add_commas(1);
@@ -902,29 +848,29 @@ void nmea_RMC_send(nav_data_t *nav_data)
 		if(nav_data->variation<0.0f)
 		{
 			strcatpgm2ram(nmea_message, ",W,A");
-		}	
+		}
 		else
 		{
 			strcatpgm2ram(nmea_message, ",E,A");
-		}	
-	}	
+		}
+	}
 	else
 	{
-		strcatpgm2ram(nmea_message, ",,A");	
-	}	
-	
+		strcatpgm2ram(nmea_message, ",,A");
+	}
+
 	nmea_add_checksum_and_send(nmea_message);
-}	
+}
 
 void nmea_GLL_send(nav_data_t *nav_data)
 {
-	nmea_add_header(NMEA_GLL);	
-	nmea_add_latitude(nav_data);	
+	nmea_add_header(NMEA_GLL);
+	nmea_add_latitude(nav_data);
 	nmea_add_longitude(nav_data);
 	nmea_add_time(nav_data->time);
 	strcatpgm2ram(nmea_message, ",A,A");
-	
+
 	nmea_add_checksum_and_send(nmea_message);
-}	
+}
 
 // nmea add more message types here
